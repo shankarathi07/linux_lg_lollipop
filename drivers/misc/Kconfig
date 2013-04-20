@@ -672,6 +672,12 @@ config BLX
 	help
 	  Say Y here to enable Battery Life eXtender
 
+config TOUCH_WAKE
+	bool "Touch Wake support"
+	default y
+	help
+	  Say Y here to enable Touch Wake
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
