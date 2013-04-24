@@ -757,13 +757,6 @@ static void touch_input_report(struct lge_touch_data *ts)
 	for (id = 0; id < ts->pdata->caps->max_id; id++) {
 		if (!ts->ts_data.curr_data[id].state)
 			continue;
-#ifdef CONFIG_TOUCH_WAKE		
-		if (unlikely(!suspending && device_is_suspended())) {
-			ts->ts_data.curr_data[id].state = 0;
-			touch_press();
-			continue;
-		}
-#endif
 
 		input_mt_slot(ts->input_dev, id);
 		input_mt_report_slot_state(ts->input_dev,
@@ -843,6 +836,13 @@ static void touch_work_func(struct work_struct *work)
 
 	if (likely(ts->pdata->role->operation_mode == INTERRUPT_MODE))
 		int_pin = gpio_get_value(ts->pdata->int_pin);
+
+#ifdef CONFIG_TOUCH_WAKE                
+	if (unlikely(!suspending && device_is_suspended())) {
+                touch_press();
+		goto out;
+	}
+#endif
 
 	/* Accuracy Solution */
 	if (unlikely(ts->pdata->role->accuracy_filter_enable)) {
