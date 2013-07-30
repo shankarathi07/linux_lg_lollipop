@@ -73,7 +73,6 @@ void handle_IRQ(unsigned int irq, struct pt_regs *regs)
 {
 	struct pt_regs *old_regs = set_irq_regs(regs);
 
-	perf_mon_interrupt_in();
 	irq_enter();
 
 	/*
@@ -93,7 +92,6 @@ void handle_IRQ(unsigned int irq, struct pt_regs *regs)
 
 	irq_exit();
 	set_irq_regs(old_regs);
-	perf_mon_interrupt_out();
 }
 
 /*
