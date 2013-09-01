@@ -837,9 +837,10 @@ static void touch_work_func(struct work_struct *work)
 	if (likely(ts->pdata->role->operation_mode == INTERRUPT_MODE))
 		int_pin = gpio_get_value(ts->pdata->int_pin);
 
-#ifdef CONFIG_TOUCH_WAKE                
-	if (unlikely(!suspending && device_is_suspended())) {
-                touch_press();
+#ifdef CONFIG_TOUCH_WAKE
+	if (unlikely(!suspending && device_is_suspended()) &&
+					touchwake_is_enabled()) {
+		touch_press();
 		goto out;
 	}
 #endif
