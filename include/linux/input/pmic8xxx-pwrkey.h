@@ -40,7 +40,11 @@ struct pm8xxx_pwrkey_platform_data  {
 };
 
 #ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+#ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
 void power_on_display(struct input_dev *input_device);
+#else
+void power_on_display_dt2w(struct input_dev *input_device);
+#endif
 #endif
 
 #endif /* __PMIC8XXX_PWRKEY_H__ */

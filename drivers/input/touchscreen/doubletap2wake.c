@@ -78,7 +78,7 @@ static struct workqueue_struct *dt2w_input_wq;
 static struct work_struct dt2w_input_work;
 
 /* PowerKey setter */
-void power_on_display(struct input_dev *input_device)
+void power_on_display_dt2w(struct input_dev *input_device)
 {
        doubletap2wake_pwrdev = input_device;
 }
