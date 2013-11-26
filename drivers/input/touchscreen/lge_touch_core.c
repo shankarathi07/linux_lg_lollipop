@@ -452,6 +452,7 @@ static int touch_ic_init(struct lge_touch_data *ts)
 
 err_out_retry:
 	ts->ic_init_err_cnt++;
+	disable_irq_nosync(ts->client->irq);
 	safety_reset(ts);
 	queue_delayed_work(touch_wq, &ts->work_init, msecs_to_jiffies(10));
 
