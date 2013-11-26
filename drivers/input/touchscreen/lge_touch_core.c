@@ -34,6 +34,15 @@
 
 #include <linux/input/lge_touch_core.h>
 
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+#ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
+#include <linux/input/sweep2wake.h>
+#endif
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+#include <linux/input/doubletap2wake.h>
+#endif
+#endif
+
 struct touch_device_driver*     touch_device_func;
 struct workqueue_struct*        touch_wq;
 
@@ -122,6 +131,10 @@ void* get_touch_handle(struct i2c_client *client)
  */
 int touch_i2c_read(struct i2c_client *client, u8 reg, int len, u8 *buf)
 {
+
+#define SYNAPTICS_I2C_RETRY 10
+	int retry = 0;
+
 	struct i2c_msg msgs[] = {
 		{
 			.addr = client->addr,
@@ -137,13 +150,18 @@ int touch_i2c_read(struct i2c_client *client, u8 reg, int len, u8 *buf)
 		},
 	};
 
-	if (i2c_transfer(client->adapter, msgs, 2) < 0) {
-		if (printk_ratelimit())
-			TOUCH_ERR_MSG("transfer error\n");
-		return -EIO;
-	} else {
-		return 0;
+	for (retry = 0; retry <= SYNAPTICS_I2C_RETRY; retry++) {
+		if (i2c_transfer(client->adapter, msgs, 2) == 2)
+			break;
+
+		if (retry == SYNAPTICS_I2C_RETRY) {
+			if (printk_ratelimit())
+				TOUCH_ERR_MSG("transfer error\n");
+			return -EIO;
+		} else
+			msleep(10);
 	}
+	return 0;
 }
 
 int touch_i2c_write(struct i2c_client *client, u8 reg, int len, u8 * buf)
@@ -1998,8 +2016,11 @@ static int touch_probe(struct i2c_client *client,
 
 		ret = request_threaded_irq(client->irq, touch_irq_handler,
 				NULL,
-				ts->pdata->role->irqflags | IRQF_ONESHOT,
-				client->name, ts);
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+                        IRQF_TRIGGER_FALLING | IRQF_ONESHOT | IRQF_NO_SUSPEND, client->name, ts);
+#else
+                        IRQF_TRIGGER_FALLING | IRQF_ONESHOT, client->name, ts);
+#endif
 
 		if (ret < 0) {
 			TOUCH_ERR_MSG("request_irq failed. use polling mode\n");
