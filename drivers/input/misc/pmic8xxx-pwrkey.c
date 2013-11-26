@@ -193,10 +193,10 @@ static int __devinit pmic8xxx_pwrkey_probe(struct platform_device *pdev)
 		input_report_key(pwrkey->pwr, KEY_POWER, 1);
 		input_sync(pwrkey->pwr);
 	}
-
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
 	power_on_display(pwr);
 	pr_info("[wake_up_display]: set device %s\n", pwr->name);
-
+#endif
 	err = request_any_context_irq(key_press_irq, pwrkey_press_irq,
 		IRQF_TRIGGER_RISING, "pmic8xxx_pwrkey_press", pwrkey);
 	if (err < 0) {

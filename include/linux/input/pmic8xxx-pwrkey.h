@@ -15,7 +15,9 @@
 
 #define PM8XXX_PWRKEY_DEV_NAME "pm8xxx-pwrkey"
 
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
 #include <linux/input.h>
+#endif
 
 /**
  * struct pm8xxx_pwrkey_platform_data - platform data for pwrkey driver
@@ -37,6 +39,8 @@ struct pm8xxx_pwrkey_platform_data  {
 	u32  wakeup;
 };
 
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
 void power_on_display(struct input_dev *input_device);
+#endif
 
 #endif /* __PMIC8XXX_PWRKEY_H__ */
