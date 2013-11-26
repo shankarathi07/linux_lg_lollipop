@@ -26,6 +26,7 @@
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/input/doubletap2wake.h>
+#include <linux/input/pmic8xxx-pwrkey.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/input.h>
@@ -75,6 +76,12 @@ static struct input_dev * doubletap2wake_pwrdev;
 static DEFINE_MUTEX(pwrkeyworklock);
 static struct workqueue_struct *dt2w_input_wq;
 static struct work_struct dt2w_input_work;
+
+/* PowerKey setter */
+void power_on_display(struct input_dev *input_device)
+{
+       doubletap2wake_pwrdev = input_device;
+}
 
 /* Read cmdline for dt2w */
 static int __init read_dt2w_cmdline(char *dt2w)
