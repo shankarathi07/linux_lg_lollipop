@@ -2058,8 +2058,6 @@ static int touch_probe(struct i2c_client *client,
 		ts->accuracy_filter.touch_max_count = 4;
 	}
 
-        device_init_wakeup(&client->dev, true);
-
 #if defined(CONFIG_HAS_EARLYSUSPEND)
 	ts->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN + 1;
 	ts->early_suspend.suspend = touch_early_suspend;
