@@ -91,7 +91,6 @@ void power_on_display(struct input_dev *input_device)
 {
        sweep2wake_pwrdev = input_device;
 }
-EXPORT_SYMBOL(wake_up_display);
 
 /* Read cmdline for s2w */
 static int __init read_s2w_cmdline(char *s2w)
