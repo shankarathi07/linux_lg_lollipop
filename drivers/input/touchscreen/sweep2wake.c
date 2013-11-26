@@ -26,6 +26,7 @@
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/input/sweep2wake.h>
+#include <linux/input/pmic8xxx-pwrkey.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/input.h>
@@ -84,6 +85,13 @@ static struct input_dev * sweep2wake_pwrdev;
 static DEFINE_MUTEX(pwrkeyworklock);
 static struct workqueue_struct *s2w_input_wq;
 static struct work_struct s2w_input_work;
+
+/* PowerKey setter */
+void power_on_display(struct input_dev *input_device)
+{
+       sweep2wake_pwrdev = input_device;
+}
+EXPORT_SYMBOL(wake_up_display);
 
 /* Read cmdline for s2w */
 static int __init read_s2w_cmdline(char *s2w)
