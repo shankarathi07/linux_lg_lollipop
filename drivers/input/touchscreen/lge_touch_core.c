@@ -2183,26 +2183,26 @@ static void touch_early_suspend(struct early_suspend *h)
 	}
 
 #ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
-        if (!prevent_sleep)
+        if (!prevent_sleep) {
 #endif
-        {
-		if (ts->pdata->role->operation_mode == INTERRUPT_MODE)
-			disable_irq(ts->client->irq);
-		else
-			hrtimer_cancel(&ts->timer);
+	        if (ts->pdata->role->operation_mode == INTERRUPT_MODE)
+		                disable_irq(ts->client->irq);
+	        else
+		        hrtimer_cancel(&ts->timer);
 
-		cancel_work_sync(&ts->work);
-		cancel_delayed_work_sync(&ts->work_init);
-		if (ts->pdata->role->key_type == TOUCH_HARD_KEY)
-			cancel_delayed_work_sync(&ts->work_touch_lock);
+	        cancel_work_sync(&ts->work);
+	        cancel_delayed_work_sync(&ts->work_init);
+	        if (ts->pdata->role->key_type == TOUCH_HARD_KEY)
+		        cancel_delayed_work_sync(&ts->work_touch_lock);
 
+	        release_all_ts_event(ts);
+
+	        touch_power_cntl(ts, ts->pdata->role->suspend_pwr);
+#ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
+        } else {
+                enable_irq_wake(ts->client->irq);
 		release_all_ts_event(ts);
-
-		touch_power_cntl(ts, ts->pdata->role->suspend_pwr);
-		}
-#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
-        if (prevent_sleep)
-				enable_irq_wake(ts->client->irq);
+	}
 #endif
 }
 
@@ -2231,23 +2231,28 @@ static void touch_late_resume(struct early_suspend *h)
 		return;
 	}
 
-	touch_power_cntl(ts, ts->pdata->role->resume_pwr);
-
-	if (ts->pdata->role->operation_mode == INTERRUPT_MODE)
-		enable_irq(ts->client->irq);
-	else
-		hrtimer_start(&ts->timer,
-			ktime_set(0, ts->pdata->role->report_period),
-					HRTIMER_MODE_REL);
-
-	if (ts->pdata->role->resume_pwr == POWER_ON)
-		queue_delayed_work(touch_wq, &ts->work_init,
-			msecs_to_jiffies(ts->pdata->role->booting_delay));
-	else
-		queue_delayed_work(touch_wq, &ts->work_init, 0);
 #ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
-        if (prevent_sleep)
-                disable_irq_wake(ts->client->irq);
+        if (!prevent_sleep) {
+#endif
+	        touch_power_cntl(ts, ts->pdata->role->resume_pwr);
+
+	        if (ts->pdata->role->operation_mode == INTERRUPT_MODE)
+		        enable_irq(ts->client->irq);
+	        else
+		        hrtimer_start(&ts->timer,
+			        ktime_set(0, ts->pdata->role->report_period),
+					        HRTIMER_MODE_REL);
+
+	        if (ts->pdata->role->resume_pwr == POWER_ON)
+		        queue_delayed_work(touch_wq, &ts->work_init,
+			        msecs_to_jiffies(ts->pdata->role->booting_delay));
+	        else
+		        queue_delayed_work(touch_wq, &ts->work_init, 0);
+
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+	} else {
+			disable_irq_wake(ts->client->irq);
+			}
 #endif
 }
 #endif
