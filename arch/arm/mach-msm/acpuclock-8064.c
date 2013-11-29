@@ -100,7 +100,7 @@ static struct scalable scalable[] __initdata = {
  * We rely on the RPM rounding requests up here.
 */
 static struct msm_bus_paths bw_level_tbl[] __initdata = {
-#ifdef CONFIG GPU_OVERCLOCK
+#ifdef CONFIG_GPU_OVERCLOCK
 	[0] =  BW_MBPS(640), /* At least  80 MHz on bus. */
 	[1] = BW_MBPS(1064), /* At least 133 MHz on bus. */
 	[2] = BW_MBPS(1600), /* At least 200 MHz on bus. */
