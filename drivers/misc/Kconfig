@@ -666,6 +666,12 @@ config BU52031NVX_POUCHDETECT
 	help
 	  depends on BU52031NVX
 
+config BLX
+	bool "Support for Battery Life eXtender"
+	default y
+	help
+	  Say Y here to enable Battery Life eXtender
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
