@@ -47,4 +47,8 @@ void power_on_display_dt2w(struct input_dev *input_device);
 #endif
 #endif
 
+#ifdef CONFIG_PWRKEY_SUSPEND
+extern bool pwrkey_pressed;
+#endif
+
 #endif /* __PMIC8XXX_PWRKEY_H__ */
