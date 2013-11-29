@@ -393,6 +393,8 @@ struct syscore_ops panel_syscore_ops = {
 
 static int mipi_lgit_lcd_probe(struct platform_device *pdev)
 {
+    int rc;
+    
 	if (pdev->id == 0) {
 		mipi_lgit_pdata = pdev->dev.platform_data;
 		return 0;
