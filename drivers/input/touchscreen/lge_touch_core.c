@@ -832,9 +832,24 @@ static void touch_work_func(struct work_struct *work)
 {
 	struct lge_touch_data *ts =
 			container_of(work, struct lge_touch_data, work);
-	int int_pin = 0;
-	int next_work = 0;
-	int ret;
+        int int_pin = 0;
+        int next_work = 0;
+        int ret;
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE) || defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE)
+        bool prevent_sleep = false;
+#endif
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
+        prevent_sleep = (s2w_switch == 1);
+#endif
+#if defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE)
+        prevent_sleep = prevent_sleep || (dt2w_switch > 0);
+#endif
+#endif
+#ifdef CONFIG_PWRKEY_SUSPEND
+        if (pwrkey_pressed)
+                prevent_sleep = false;
+#endif
 
 	atomic_dec(&ts->next_work);
 	ts->ts_data.total_num = 0;
@@ -853,8 +868,12 @@ static void touch_work_func(struct work_struct *work)
 	ret = touch_device_func->data(ts->client, ts->ts_data.curr_data,
 		&ts->ts_data.curr_button, &ts->ts_data.total_num);
 	if (ret < 0) {
-		if (ret == -EINVAL) /* Ignore the error */
+		if (ret == -EINVAL) { /* Ignore the error */
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+		if (!prevent_sleep)
+#endif
 			return;
+		}
 		goto err_out_critical;
 	}
 
@@ -898,6 +917,12 @@ out:
 	return;
 
 err_out_retry:
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+	if (prevent_sleep) {
+		s2w_error = true;
+		return;
+	}
+#endif
 	ts->work_sync_err_cnt++;
 	atomic_inc(&ts->next_work);
 	queue_work(touch_wq, &ts->work);
@@ -905,6 +930,12 @@ err_out_retry:
 	return;
 
 err_out_critical:
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+        if (prevent_sleep) {
+                s2w_error = true;
+                return;
+        }
+#endif
 	ts->work_sync_err_cnt = 0;
 	safety_reset(ts);
 	touch_ic_init(ts);
@@ -2263,8 +2294,13 @@ static void touch_late_resume(struct early_suspend *h)
 
 #ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
 	} else {
-			disable_irq_wake(ts->client->irq);
+		disable_irq_wake(ts->client->irq);
+		if (s2w_error) {
+			s2w_error = false;
+			TOUCH_ERR_MSG("soft resetting device\n");
+			store_ts_reset(ts, "soft", 0);
 			}
+		}
 #endif
 }
 #endif
