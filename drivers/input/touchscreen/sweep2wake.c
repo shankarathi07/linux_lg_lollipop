@@ -82,7 +82,7 @@ static bool touch_x_called = false, touch_y_called = false;
 static bool scr_suspended = false, exec_count = true;
 static bool scr_on_touch = false, barrier[2] = {false, false};
 static struct notifier_block s2w_lcd_notif;
-static struct input_dev * sweep2wake_pwrdev;
+struct input_dev * sweep2wake_pwrdev;
 static DEFINE_MUTEX(pwrkeyworklock);
 static struct workqueue_struct *s2w_input_wq;
 static struct work_struct s2w_input_work;
@@ -415,12 +415,6 @@ static int __init sweep2wake_init(void)
 	sweep2wake_pwrdev->name = "s2w_pwrkey";
 	sweep2wake_pwrdev->phys = "s2w_pwrkey/input0";
 
-	rc = input_register_device(sweep2wake_pwrdev);
-	if (rc) {
-		pr_err("%s: input_register_device err=%d\n", __func__, rc);
-		goto err_input_dev;
-	}
-
 	s2w_input_wq = create_workqueue("s2wiwq");
 	if (!s2w_input_wq) {
 		pr_err("%s: Failed to create s2wiwq workqueue\n", __func__);
@@ -455,8 +449,6 @@ static int __init sweep2wake_init(void)
 		pr_warn("%s: sysfs_create_file failed for sweep2wake_version\n", __func__);
 	}
 
-err_input_dev:
-	input_free_device(sweep2wake_pwrdev);
 err_alloc_dev:
 	pr_info(LOGTAG"%s done\n", __func__);
 

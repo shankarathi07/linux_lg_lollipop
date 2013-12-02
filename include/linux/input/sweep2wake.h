@@ -23,5 +23,6 @@
 
 extern int s2w_switch, s2w_s2sonly;
 extern bool s2w_error;
+extern struct input_dev * doubletap2wake_pwrdev;
 
 #endif	/* _LINUX_SWEEP2WAKE_H */

@@ -72,7 +72,7 @@ static int touch_x = 0, touch_y = 0, touch_nr = 0, x_pre = 0, y_pre = 0;
 static bool touch_x_called = false, touch_y_called = false, touch_cnt = true;
 static bool scr_suspended = false, exec_count = true;
 static struct notifier_block dt2w_lcd_notif;
-static struct input_dev * doubletap2wake_pwrdev;
+struct input_dev * doubletap2wake_pwrdev;
 static DEFINE_MUTEX(pwrkeyworklock);
 static struct workqueue_struct *dt2w_input_wq;
 static struct work_struct dt2w_input_work;
@@ -386,12 +386,6 @@ static int __init doubletap2wake_init(void)
 	doubletap2wake_pwrdev->name = "dt2w_pwrkey";
 	doubletap2wake_pwrdev->phys = "dt2w_pwrkey/input0";
 
-	rc = input_register_device(doubletap2wake_pwrdev);
-	if (rc) {
-		pr_err("%s: input_register_device err=%d\n", __func__, rc);
-		goto err_input_dev;
-	}
-
 	dt2w_input_wq = create_workqueue("dt2wiwq");
 	if (!dt2w_input_wq) {
 		pr_err("%s: Failed to create dt2wiwq workqueue\n", __func__);
@@ -426,8 +420,6 @@ static int __init doubletap2wake_init(void)
 		pr_warn("%s: sysfs_create_file failed for doubletap2wake_version\n", __func__);
 	}
 
-err_input_dev:
-	input_free_device(doubletap2wake_pwrdev);
 err_alloc_dev:
 	pr_info(LOGTAG"%s done\n", __func__);
 

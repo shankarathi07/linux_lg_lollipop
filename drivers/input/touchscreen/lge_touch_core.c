@@ -2041,6 +2041,21 @@ static int touch_probe(struct i2c_client *client,
 		goto err_input_register_device_failed;
 	}
 
+#ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
+	ret = input_register_device(sweep2wake_pwrdev);
+	if (ret < 0) {
+		pr_err("%s: input_register_device err=%d\n", __func__, ret);
+		goto err_input_register_device_s2wpwr_failed;
+	}
+#endif
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	ret = input_register_device(doubletap2wake_pwrdev);
+	if (ret < 0) {
+		pr_err("%s: input_register_device err=%d\n", __func__, ret);
+		goto err_input_register_device_dt2wpwr_failed;
+	}
+#endif
+
 	if (ts->pdata->role->operation_mode == INTERRUPT_MODE) {
 		ret = gpio_request(ts->pdata->int_pin, "touch_int");
 		if (ret < 0) {
@@ -2145,6 +2160,14 @@ err_interrupt_failed:
 	input_unregister_device(ts->input_dev);
 err_input_register_device_failed:
 	input_free_device(ts->input_dev);
+#ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
+err_input_register_device_s2wpwr_failed:
+	input_free_device(sweep2wake_pwrdev);
+#endif
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+err_input_register_device_dt2wpwr_failed:
+	input_free_device(doubletap2wake_pwrdev);
+#endif
 err_input_dev_alloc_failed:
 	touch_power_cntl(ts, POWER_OFF);
 err_power_failed:
