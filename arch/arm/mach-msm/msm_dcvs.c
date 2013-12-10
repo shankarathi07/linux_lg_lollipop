@@ -146,7 +146,11 @@ static struct dcvs_core core_list[CORES_MAX];
 
 static struct kobject *cores_kobj;
 
+#ifdef CONFIG_CPU_OVERCLOCK
+#define DCVS_MAX_NUM_FREQS 20
+#else
 #define DCVS_MAX_NUM_FREQS 15
+#endif
 static struct msm_dcvs_freq_entry cpu_freq_tbl[DCVS_MAX_NUM_FREQS];
 static unsigned num_cpu_freqs;
 static struct msm_dcvs_platform_data *dcvs_pdata;
