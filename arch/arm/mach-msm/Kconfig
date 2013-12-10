@@ -1624,7 +1624,7 @@ config USERSPACE_VOLTAGE_CONTROL
 
 config GPU_OVERCLOCK
 	bool "Enable GPU Overclocking option"
-	default n
+	default y
 	help
 	  GPU OC to 487.5Mhz
 
