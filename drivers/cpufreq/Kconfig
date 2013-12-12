@@ -116,6 +116,30 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	  loading your cpufreq low-level hardware driver, using the
 	  'interactive' governor for latency-sensitive workloads.
 
+config CPU_FREQ_DEFAULT_GOV_SMARTASS2
+	bool "smartass2"
+	select CPU_FREQ_GOV_SMARTASS2
+	help
+	  Use the CPUFreq governor 'smartassv2' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SMOOTHASS
+	bool "smoothass"
+	select CPU_FREQ_GOV_SMOOTHASS
+	help
+	  Use as default governor
+
+config CPU_FREQ_DEFAULT_GOV_BRAZILIANWAX
+	bool "brazilianwax"
+	select CPU_FREQ_GOV_BRAZILIANWAX
+	help
+	  Use the CPUFreq governor 'brazilianwax' as default.
+
+config CPU_FREQ_DEFAULT_GOV_ASSWAX
+	bool "asswax"
+	select CPU_FREQ_GOV_ASSWAX
+	help
+	  Use as default governor
+	  	  
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -194,6 +218,33 @@ config CPU_FREQ_GOV_INTERACTIVE
 
 	  If in doubt, say N.
 
+config CPU_FREQ_GOV_SMARTASS2
+	tristate "'smartassv2' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'smartassv2' - a "smart" governor
+	  If in doubt, say N.
+
+config CPU_FREQ_GOV_SMOOTHASS
+	tristate "'smoothass' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  Yet another governor by erasmux
+
+config CPU_FREQ_GOV_BRAZILIANWAX
+	tristate "'brazilianwax' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'brazilianwax' - a "smart" governor
+
+	  If in doubt, say N.
+
+config CPU_FREQ_GOV_ASSWAX
+	tristate "'asswax' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  Use as default governors
+	  	  
 config CPU_FREQ_GOV_CONSERVATIVE
 	tristate "'conservative' cpufreq governor"
 	depends on CPU_FREQ
