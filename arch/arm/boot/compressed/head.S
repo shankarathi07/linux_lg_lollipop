@@ -314,6 +314,11 @@ restart:	adr	r0, LC0
 dtb_check_done:
 #endif
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+  #include <asm/kexec.h>
+  #include <asm/memory.h>
+#endif
+
 /*
  * Check to see if we will overwrite ourselves.
  *   r4  = final kernel address
