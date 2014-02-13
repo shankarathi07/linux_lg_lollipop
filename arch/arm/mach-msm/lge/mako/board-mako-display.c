@@ -762,12 +762,12 @@ static char panel_setting_2 [3] = {0xB3, 0x0A, 0x9F};
 static char display_mode1 [6] = {0xB5, 0x50, 0x20, 0x40, 0x00, 0x20};
 static char display_mode2 [8] = {0xB6, 0x00, 0x14, 0x0F, 0x16, 0x13, 0x05, 0x05};
 
-#define g_white       0x12
-#define g_mids        0x42
-#define g_black       0x74
-#define g_contrast    0x02
-#define g_brightness  0x02
-#define g_saturation  0x07
+#define g_white       0x00
+#define g_mids        0x27
+#define g_black       0x77
+#define g_contrast    0x06
+#define g_brightness  0x00
+#define g_saturation  0x02
 #define g_greys       0x00
 
 static char p_gamma_r_setting[10] = {0xD0, g_white, g_mids, g_black, 0x00, g_contrast, g_brightness, g_saturation, g_greys, 0x01};
